@@ -33,3 +33,4 @@ urlpatterns = [
     path("api/analytics/", include("analytics.urls")),
     path("api/audit-logs/", include("audit_logs.urls")),
 ]
+

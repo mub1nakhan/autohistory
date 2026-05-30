@@ -1,6 +1,7 @@
-from django.urls import path
-from .views import AnalyticsView
+from rest_framework.routers import DefaultRouter
+from .views import AnalyticsViewSet
 
-urlpatterns = [
-    path('analytics/', AnalyticsView.as_view(), name='analytics'),
-]
+router = DefaultRouter()
+router.register(r"analytics", AnalyticsViewSet, basename="analytics")
+
+urlpatterns = router.urls

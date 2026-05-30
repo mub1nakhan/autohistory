@@ -1,0 +1,173 @@
+# AutoHistory — Vehicle History & Risk Intelligence Platform
+
+A Django REST Framework API for tracking vehicle history, accident records, service history, inspections, and calculating risk scores.
+
+---
+
+## 🚀 Quick Start (Local Development)
+
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Run migrations
+```bash
+python manage.py migrate
+```
+
+### 3. Create superuser
+```bash
+python manage.py createsuperuser
+```
+
+### 4. Run server
+```bash
+python manage.py runserver
+```
+
+---
+
+## 🐳 Docker (Production)
+```bash
+docker-compose up --build
+```
+
+---
+
+## 📖 API Documentation
+- Swagger UI: http://localhost:8000/api/docs/
+- OpenAPI Schema: http://localhost:8000/api/schema/
+- Admin Panel: http://localhost:8000/admin/
+
+---
+
+## 🔑 Authentication
+
+All endpoints (except register/login) require JWT token:
+
+```
+Authorization: Bearer <access_token>
+```
+
+### Auth Endpoints
+| Method | URL | Description |
+|--------|-----|-------------|
+| POST | `/api/users/auth/register/` | Register new user |
+| POST | `/api/users/auth/login/` | Login, get tokens |
+| POST | `/api/users/auth/logout/` | Logout (blacklist refresh token) |
+| POST | `/api/users/auth/logout-all/` | Logout from all devices |
+| POST | `/api/users/auth/token/refresh/` | Refresh access token |
+
+---
+
+## 📋 API Endpoints
+
+### Users
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/users/` | List users (admin only) |
+| GET | `/api/users/me/` | Current user profile |
+| PATCH | `/api/users/me/update/` | Update profile |
+| POST | `/api/users/me/change-password/` | Change password |
+| GET | `/api/users/me/login-history/` | Login sessions |
+
+### Vehicles
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/vehicles/vehicles/` | List vehicles |
+| POST | `/api/vehicles/vehicles/` | Register vehicle |
+| GET | `/api/vehicles/vehicles/{id}/` | Vehicle details |
+| GET | `/api/vehicles/vehicles/vin/{vin_code}/` | Search by VIN |
+| GET | `/api/vehicles/vehicles/{id}/summary/` | Vehicle summary stats |
+| POST | `/api/vehicles/vehicles/{id}/transfer-ownership/` | Transfer ownership |
+
+### Accidents
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/accidents/accidents/` | List accidents |
+| POST | `/api/accidents/accidents/` | Add accident (admin/inspector) |
+| POST | `/api/accidents/accidents/{id}/verify/` | Verify accident |
+
+### Service Records
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/service-records/service-records/` | List service records |
+| POST | `/api/service-records/service-records/` | Add service record (admin/service_center) |
+
+### Inspections
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/inspections/inspections/` | List inspections |
+| POST | `/api/inspections/inspections/` | Add inspection (admin/inspector) |
+
+### Risk Engine
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/risk-engine/risk-scores/` | List risk scores |
+| POST | `/api/risk-engine/risk-scores/calculate/{vehicle_id}/` | Calculate risk score |
+
+### Reports
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/reports/reports/` | List reports |
+| POST | `/api/reports/reports/` | Create report |
+
+### Notifications
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/notifications/notifications/` | My notifications |
+| POST | `/api/notifications/notifications/mark-all-read/` | Mark all read |
+| POST | `/api/notifications/notifications/{id}/mark-read/` | Mark one read |
+
+### Analytics (Admin only)
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/analytics/analytics/overview/` | Platform overview stats |
+
+### Audit Logs (Admin only)
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/api/audit-logs/audit-logs/` | System audit log |
+
+---
+
+## 👥 User Roles
+
+| Role | Permissions |
+|------|-------------|
+| `admin` | Full access |
+| `inspector` | Can add/verify accidents and inspections |
+| `service_center` | Can add service records |
+| `dealer` | Can view vehicles |
+| `user` | Can view vehicle history |
+
+---
+
+## ⚙️ Risk Score Calculation
+
+Risk score (0-100) is calculated based on:
+- **Accident severity**: high=15, medium=10, low=5 pts (max 30)
+- **Accident count**: 2 pts each (max 10)
+- **Mileage inconsistency**: 25 pts if mileage rollback detected
+- **No service records**: 20 pts
+- **Old/missing inspections**: 15 pts if >1 year since last inspection
+
+---
+
+## 🏗️ Project Structure
+
+```
+autohistory/
+├── core/               # Django settings, URLs, Celery config
+├── users/              # Auth, user management, JWT, roles
+├── vehicles/           # Vehicle CRUD, VIN search, ownership transfer
+├── accidents/          # Accident records with verification
+├── service_records/    # Maintenance & repair history
+├── inspections/        # Vehicle inspection records
+├── risk_engine/        # Risk scoring algorithm
+├── reports/            # Generated reports
+├── notifications/      # User notifications
+├── analytics/          # Platform analytics
+└── audit_logs/         # System audit trail
+```
