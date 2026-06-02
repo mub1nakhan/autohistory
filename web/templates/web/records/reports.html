@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Reports{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Reports</span>
+    <h1>Generated vehicle reports.</h1>
+    <p class="lead">View report payloads and the vehicles they describe.</p>
+
+    <div class="grid stats">
+      <div class="stat"><strong>{{ total }}</strong><span class="muted">Total</span></div>
+    </div>
+  </section>
+
+  <section class="section panel">
+    <div class="table-like">
+      {% for report in reports %}
+        <article class="list-item">
+          <div>
+            <h3 style="margin-bottom: 6px;">{{ report.vehicle.display_name }}</h3>
+            <div class="meta">
+              <span class="badge">{{ report.created_at }}</span>
+              <span class="badge">{{ report.report_type }}</span>
+            </div>
+            <p class="muted" style="margin-top: 10px;">Created by {{ report.created_by }}</p>
+          </div>
+          <div class="meta">
+            <span class="badge">{{ report.data|default:"No data" }}</span>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">No reports yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="meta" style="margin-top: 18px;">
+        {% if page_obj.has_previous %}<a class="button" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span class="badge">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="button" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

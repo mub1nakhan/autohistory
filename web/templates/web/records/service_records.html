@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Service Records{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Maintenance log</span>
+    <h1>Service and repair trail.</h1>
+    <p class="lead">Browse service records with mileage, cost, and the vehicle they belong to.</p>
+
+    <div class="grid stats">
+      <div class="stat"><strong>{{ total }}</strong><span class="muted">Total</span></div>
+    </div>
+  </section>
+
+  <section class="section panel">
+    <div class="table-like">
+      {% for record in service_records %}
+        <article class="list-item">
+          <div>
+            <h3 style="margin-bottom: 6px;">{{ record.vehicle.display_name }}</h3>
+            <div class="meta">
+              <span class="badge">{{ record.service_date }}</span>
+              <span class="badge">{{ record.get_service_type_display }}</span>
+              <span class="badge">{{ record.mileage }} km</span>
+            </div>
+            <p class="muted" style="margin-top: 10px;">{{ record.description|default:"No description provided." }}</p>
+          </div>
+          <div class="meta">
+            <span class="badge">{% if record.cost %}{{ record.cost }} {{ record.currency }}{% else %}No cost{% endif %}</span>
+            <span class="badge">{{ record.service_center_name|default:"No service center" }}</span>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">No service records yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="meta" style="margin-top: 18px;">
+        {% if page_obj.has_previous %}<a class="button" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span class="badge">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="button" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

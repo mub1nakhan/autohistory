@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Vehicles{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Vehicle directory</span>
+    <h1>Search the fleet.</h1>
+    <p class="lead">Look up vehicles by VIN, plate number, brand, or model and jump straight into the history page.</p>
+
+    <form class="searchbar" action="{% url 'vehicle-list' %}" method="get">
+      <input type="search" name="q" value="{{ query }}" placeholder="Try `VIN`, `plate`, `Toyota`, `Corolla`">
+      <button class="button" type="submit">Filter</button>
+      {% if user.is_authenticated %}
+        <a class="button" href="{% url 'vehicle-create' %}">Add vehicle</a>
+      {% endif %}
+    </form>
+  </section>
+
+  <section class="section panel">
+    <div class="section-head">
+      <div>
+        <h2>Results</h2>
+        <p>{% if query %}Filtered by <strong>{{ query }}</strong>{% else %}Showing the latest records{% endif %}</p>
+      </div>
+    </div>
+
+    <div class="table-like">
+      {% load vehicle_extras %}
+      {% for vehicle in vehicles %}
+              <article class="list-item {% if vehicle.is_verified %}verified{% endif %}">
+          <div>
+            <h3 style="margin-bottom: 6px;">
+              <a href="{% url 'vehicle-detail' vehicle.pk %}">{{ vehicle.display_name }}</a>
+            </h3>
+            <div class="meta">
+              <span class="badge">{{ vehicle.plate_number }}</span>
+                    <span class="badge">{{ vehicle.vin_code }}</span>
+                    <span class="badge {% if vehicle.status == 'active' %}good{% else %}danger{% endif %}">{{ vehicle.get_status_display }}</span>
+                    {% if vehicle.price %}<span class="badge {{ vehicle.price|price_class }}">{{ vehicle.price_display }}</span>{% endif %}
+                    <span class="badge">{{ vehicle.workshop_visits }} visits</span>
+                    {% if vehicle.is_verified %}
+                      <span class="badge verified">Verified</span>
+                    {% endif %}
+            </div>
+            <p class="muted" style="margin-top: 12px;">
+              Owner: {{ vehicle.owner.full_name|default:"Unassigned" }} | Registered by: {{ vehicle.registered_by.full_name|default:"Unknown" }}
+            </p>
+          </div>
+          <div class="meta">
+            <span class="badge good">{{ vehicle.year }}</span>
+            <span class="badge warn">{{ vehicle.mileage }} km</span>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">No vehicles matched this query.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="meta" style="margin-top: 18px;">
+        {% if page_obj.has_previous %}
+          <a class="button" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span class="badge">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a class="button" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

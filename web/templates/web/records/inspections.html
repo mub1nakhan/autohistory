@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Inspections{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Inspection trail</span>
+    <h1>Results and ratings.</h1>
+    <p class="lead">Monitor inspection outcomes and how each vehicle is performing over time.</p>
+
+    <div class="grid stats">
+      <div class="stat"><strong>{{ total }}</strong><span class="muted">Total</span></div>
+      <div class="stat"><strong>{{ passed }}</strong><span class="muted">Passed</span></div>
+      <div class="stat"><strong>{{ failed }}</strong><span class="muted">Failed</span></div>
+    </div>
+  </section>
+
+  <section class="section panel">
+    <div class="table-like">
+      {% for inspection in inspections %}
+        <article class="list-item">
+          <div>
+            <h3 style="margin-bottom: 6px;">{{ inspection.vehicle.display_name }}</h3>
+            <div class="meta">
+              <span class="badge">{{ inspection.inspection_date }}</span>
+              <span class="badge">{{ inspection.get_result_display }}</span>
+              <span class="badge">{{ inspection.rating }}/10</span>
+            </div>
+            <p class="muted" style="margin-top: 10px;">{{ inspection.notes|default:"No inspection notes." }}</p>
+          </div>
+          <div class="meta">
+            <span class="badge">{{ inspection.inspector_name }}</span>
+            <span class="badge">Next: {{ inspection.next_inspection_date|default:"Not set" }}</span>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">No inspection records yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="meta" style="margin-top: 18px;">
+        {% if page_obj.has_previous %}<a class="button" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span class="badge">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="button" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

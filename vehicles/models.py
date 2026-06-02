@@ -28,6 +28,15 @@ class VehicleStatus(models.TextChoices):
     SCRAPPED = "scrapped", "Scrapped"
 
 
+CURRENCY_CHOICES = [
+    ("USD", "USD"),
+    ("EUR", "EUR"),
+    ("GBP", "GBP"),
+    ("TRY", "TRY"),
+    ("CHF", "CHF"),
+]
+
+
 class Vehicle(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vin_code = models.CharField(
@@ -45,6 +54,10 @@ class Vehicle(models.Model):
     )
     engine_volume = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     mileage = models.PositiveIntegerField(default=0, help_text="Current mileage in km")
+    price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, help_text="Suggested price or valuation")
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="USD", help_text="Currency code for the price (e.g. USD, EUR)")
+    is_verified = models.BooleanField(default=False, help_text="Is this vehicle record verified by staff?")
+    workshop_visits = models.PositiveSmallIntegerField(default=0, help_text="Manual count of workshop visits")
     status = models.CharField(
         max_length=20, choices=VehicleStatus.choices, default=VehicleStatus.ACTIVE, db_index=True
     )
@@ -75,6 +88,14 @@ class Vehicle(models.Model):
     @property
     def display_name(self):
         return f"{self.year} {self.brand} {self.model}"
+
+    def price_display(self):
+        if self.price is None:
+            return None
+        try:
+            return f"{self.currency} {self.price:,.2f}"
+        except Exception:
+            return f"{self.currency} {self.price}"
 
 
 class VehicleOwnershipHistory(models.Model):

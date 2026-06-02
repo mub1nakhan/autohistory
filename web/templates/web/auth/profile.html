@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Profile{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Your account</span>
+    <h1>{{ user.full_name }}</h1>
+    <p class="lead">{{ user.email }} · {{ user.get_role_display }} · {% if user.is_verified %}Verified{% else %}Not verified{% endif %}</p>
+  </section>
+
+  <section class="section detail-grid">
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Account details</h2>
+          <p>Basic information from your profile record.</p>
+        </div>
+      </div>
+      <div class="table-like">
+        <div class="list-item"><strong>Email</strong><span class="muted">{{ user.email }}</span></div>
+        <div class="list-item"><strong>Phone</strong><span class="muted">{{ user.phone|default:"Not set" }}</span></div>
+        <div class="list-item"><strong>Role</strong><span class="muted">{{ user.get_role_display }}</span></div>
+        <div class="list-item"><strong>Joined</strong><span class="muted">{{ user.created_at }}</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Recent sessions</h2>
+          <p>Latest active login records if available.</p>
+        </div>
+      </div>
+      <div class="table-like">
+        {% for session in recent_login_history %}
+          <div class="list-item">
+            <div>
+              <strong>{{ session.logged_in_at }}</strong>
+              <div class="meta">
+                <span class="badge">{{ session.device_type|default:"unknown" }}</span>
+                <span class="badge">{{ session.is_active|yesno:"Active,Inactive" }}</span>
+              </div>
+            </div>
+            <span class="muted">{{ session.ip_address }}</span>
+          </div>
+        {% empty %}
+          <p class="muted">No login sessions found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

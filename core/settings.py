@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django_filters",
     # Project apps
     "users",
+    "web.apps.WebConfig",
     "vehicles",
     "service_records",
     "accidents",
@@ -54,6 +55,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "web.context_processors.global_stats",
             ],
         },
     },
@@ -76,6 +78,9 @@ DATABASES = {
 
 
 AUTH_USER_MODEL = "users.User"
+LOGIN_URL = "web-login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

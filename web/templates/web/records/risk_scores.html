@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Risk Scores{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Risk engine</span>
+    <h1>Risk score overview.</h1>
+    <p class="lead">Review the latest score for each vehicle and what the engine recorded during calculation.</p>
+
+    <div class="grid stats">
+      <div class="stat"><strong>{{ total }}</strong><span class="muted">Total</span></div>
+      <div class="stat"><strong>{{ high_risk }}</strong><span class="muted">High risk</span></div>
+      <div class="stat"><strong>{{ medium_risk }}</strong><span class="muted">Medium risk</span></div>
+    </div>
+  </section>
+
+  <section class="section panel">
+    <div class="table-like">
+      {% for item in risk_scores %}
+        <article class="list-item">
+          <div>
+            <h3 style="margin-bottom: 6px;">{{ item.vehicle.display_name }}</h3>
+            <div class="meta">
+              <span class="badge">{{ item.risk_score }}/100</span>
+              <span class="badge">Calculated {{ item.last_calculated_at }}</span>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="badge">{{ item.breakdown_json|default:"No breakdown" }}</span>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">No risk scores yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="meta" style="margin-top: 18px;">
+        {% if page_obj.has_previous %}<a class="button" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span class="badge">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="button" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

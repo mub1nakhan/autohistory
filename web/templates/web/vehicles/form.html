@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | {{ title }}{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">{% if mode == "update" %}Edit vehicle{% else %}New vehicle{% endif %}</span>
+    <h1>{{ title }}</h1>
+    <p class="lead">
+      {% if mode == "update" %}
+        Update the vehicle record and keep the history clean.
+      {% else %}
+        Create a new vehicle record for the history timeline.
+      {% endif %}
+    </p>
+  </section>
+
+  <section class="section panel">
+    {% if form.non_field_errors %}
+      <div class="errors">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form.visible_fields %}
+          <div class="form-field {% if field.name == 'notes' %}full{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="help">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+              <div class="help" style="color: #fecaca;">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="actions">
+        <button class="button" type="submit">{% if mode == "update" %}Save changes{% else %}Create vehicle{% endif %}</button>
+        <a class="button" href="{% if vehicle %}{% url 'vehicle-detail' vehicle.pk %}{% else %}{% url 'vehicle-list' %}{% endif %}">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

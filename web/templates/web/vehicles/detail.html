@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | {{ vehicle.display_name }}{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Vehicle profile</span>
+    <h1>{{ vehicle.display_name }}</h1>
+    <p class="lead">
+      VIN {{ vehicle.vin_code }} | Plate {{ vehicle.plate_number }} | {{ vehicle.get_status_display }} status.
+      {% if vehicle.price %}| Price: <strong>{{ vehicle.price_display }}</strong>{% endif %}
+      | Visits: {{ vehicle.workshop_visits }}{% if vehicle.is_verified %} | <span class="badge good">Verified</span>{% endif %}
+    </p>
+
+    {% if user.is_authenticated %}
+      <div class="actions">
+        <a class="button" href="{% url 'vehicle-update' vehicle.pk %}">Edit vehicle</a>
+        <a class="button" href="{% url 'vehicle-delete' vehicle.pk %}">Delete vehicle</a>
+      </div>
+    {% endif %}
+
+    {% load vehicle_extras %}
+    <div class="grid stats">
+      <div class="stat"><strong>{{ summary.accident_count }}</strong><span class="muted">Accidents</span></div>
+      <div class="stat"><strong>{{ summary.service_record_count }}</strong><span class="muted">Service records</span></div>
+      <div class="stat"><strong>{{ summary.inspection_count }}</strong><span class="muted">Inspections</span></div>
+      <div class="stat"><strong>{{ summary.ownership_count }}</strong><span class="muted">Ownership changes</span></div>
+      <div class="stat"><strong>{{ vehicle.workshop_visits }}</strong><span class="muted">Workshop visits</span></div>
+      <div class="stat"><strong>{% if vehicle.price %}{{ vehicle.price_display }}{% else %}-{% endif %}</strong><span class="muted">Price</span></div>
+      <div class="stat"><strong>{% if summary.risk_score is not None %}{{ summary.risk_score }}{% else %}-{% endif %}</strong><span class="muted">Risk score</span></div>
+      <div class="stat"><strong>{{ vehicle.mileage }}</strong><span class="muted">Current mileage</span></div>
+    </div>
+  </section>
+
+  <section class="section detail-grid">
+    <div class="stack">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>Accidents</h2>
+            <p>Chronological record of incidents tied to this vehicle.</p>
+          </div>
+        </div>
+        <div class="table-like">
+          {% for accident in accidents %}
+            <div class="list-item">
+              <div>
+                <strong>{{ accident.accident_date }} | {{ accident.get_severity_display }}</strong>
+                <div class="meta">
+                  <span class="badge">{{ accident.location|default:"Location not specified" }}</span>
+                  <span class="badge">{{ accident.verified|yesno:"Verified,Unverified" }}</span>
+                </div>
+                <p class="muted" style="margin-top: 10px;">{{ accident.description|default:"No description provided." }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <p class="muted">No accident records yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>Service records</h2>
+            <p>Maintenance and repair activity.</p>
+          </div>
+        </div>
+        <div class="table-like">
+          {% for record in service_records %}
+            <div class="list-item">
+              <div>
+                <strong>{{ record.service_date }} | {{ record.get_service_type_display }}</strong>
+                <div class="meta">
+                  <span class="badge">{{ record.mileage }} km</span>
+                  <span class="badge">{% if record.cost %}{{ record.cost }} {{ record.currency }}{% else %}Cost not set{% endif %}</span>
+                </div>
+                <p class="muted" style="margin-top: 10px;">{{ record.description|default:"No description provided." }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <p class="muted">No service records yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>Inspections</h2>
+            <p>Results from official inspections.</p>
+          </div>
+        </div>
+        <div class="table-like">
+          {% for inspection in inspections %}
+            <div class="list-item">
+              <div>
+                <strong>{{ inspection.inspection_date }} | {{ inspection.get_result_display }}</strong>
+                <div class="meta">
+                  <span class="badge">{{ inspection.inspector_name }}</span>
+                  <span class="badge">{{ inspection.rating }}/10</span>
+                </div>
+                <p class="muted" style="margin-top: 10px;">{{ inspection.notes|default:"No inspection notes." }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <p class="muted">No inspection records yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>Ownership history</h2>
+            <p>Past and current ownership timeline.</p>
+          </div>
+        </div>
+        <div class="table-like">
+          {% for item in ownership_history %}
+            <div class="list-item">
+              <div>
+                <strong>{{ item.owner_name }}</strong>
+                <div class="meta">
+                  <span class="badge">Acquired {{ item.acquired_at }}</span>
+                  <span class="badge">Released {{ item.released_at|default:"Current" }}</span>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="muted">No ownership history yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

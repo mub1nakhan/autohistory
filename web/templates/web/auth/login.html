@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Login{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Welcome back</span>
+    <h1>Sign in to manage the history.</h1>
+    <p class="lead">Use your email and password to access the browser dashboard and editing tools.</p>
+  </section>
+
+  <section class="section panel" style="max-width: 560px;">
+    {% if form.non_field_errors %}
+      <div class="errors">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form.visible_fields %}
+          <div class="form-field full">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="help" style="color: #fecaca;">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="actions">
+        <button class="button" type="submit">Login</button>
+        <a class="button" href="{% url 'web-register' %}">Create account</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

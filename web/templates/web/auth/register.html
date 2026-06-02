@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}AutoHistory | Register{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <span class="kicker">Create account</span>
+    <h1>Join the platform.</h1>
+    <p class="lead">Register to manage records, edit vehicles, and use the browser dashboard.</p>
+  </section>
+
+  <section class="section panel" style="max-width: 760px;">
+    {% if form.non_field_errors %}
+      <div class="errors">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form.visible_fields %}
+          <div class="form-field {% if field.name == 'phone' %}full{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="help">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+              <div class="help" style="color: #fecaca;">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="actions">
+        <button class="button" type="submit">Create account</button>
+        <a class="button" href="{% url 'web-login' %}">I already have an account</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

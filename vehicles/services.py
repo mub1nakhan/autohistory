@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from .models import Vehicle, VehicleOwnershipHistory
 
 
@@ -56,7 +58,10 @@ class VehicleService:
         accidents = vehicle.accidents.all()
         service_records = vehicle.service_records.all()
         inspections = vehicle.inspections.all()
-        risk = getattr(vehicle, "risk_score", None)
+        try:
+            risk = vehicle.risk_score
+        except ObjectDoesNotExist:
+            risk = None
         return {
             "vehicle_id": str(vehicle.id),
             "display_name": vehicle.display_name,

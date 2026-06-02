@@ -34,8 +34,9 @@ class Accident(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    
+
     class Meta:
-        db_table = "accidents"
         ordering = ["-accident_date"]
         indexes = [
             models.Index(fields=["vehicle", "-accident_date"]),
@@ -45,3 +46,4 @@ class Accident(models.Model):
 
     def __str__(self):
         return f"{self.vehicle} - {self.severity} ({self.accident_date})"
+    
