@@ -1,88 +1,191 @@
 {% extends "base.html" %}
 
-{% block title %}AutoHistory | Overview{% endblock %}
+{% block title %}Dashboard | AutoHistory{% endblock %}
 
 {% block content %}
-  <section class="hero">
-    <span class="kicker">Public dashboard</span>
-    <h1>Track a vehicle's story in one place.</h1>
-    <p class="lead">
-      AutoHistory centralizes ownership changes, service records, inspections, accidents, and risk scoring
-      into a clean browser-first experience.
-    </p>
 
-    <form class="searchbar" action="{% url 'vehicle-list' %}" method="get">
-      <input type="search" name="q" placeholder="Search by VIN, plate number, brand, or model">
-      <button class="button" type="submit">Search vehicles</button>
-    </form>
+<section>
 
-    <div class="grid stats">
-      <div class="stat"><strong>{{ stats.vehicles }}</strong><span class="muted">Vehicles</span></div>
-      <div class="stat"><strong>{{ stats.accidents }}</strong><span class="muted">Accidents</span></div>
-      <div class="stat"><strong>{{ stats.service_records }}</strong><span class="muted">Service records</span></div>
-      <div class="stat"><strong>{{ stats.inspections }}</strong><span class="muted">Inspections</span></div>
-      <div class="stat"><strong>{{ stats.reports }}</strong><span class="muted">Reports</span></div>
-      <div class="stat"><strong>{{ stats.risk_scores }}</strong><span class="muted">Risk scores</span></div>
-    </div>
-  </section>
+    <div class="hero-banner">
 
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <h2>Recently added vehicles</h2>
-        <p>Latest registrations with quick context for accidents and maintenance.</p>
-      </div>
-      <a class="chip" href="{% url 'vehicle-list' %}">Browse all vehicles</a>
-    </div>
+        <div>
+            <span class="hero-badge">
+                Vehicle Intelligence Platform
+            </span>
 
-    <div class="cards">
-      {% for vehicle in recent_vehicles %}
-        <article class="card">
-          <h3><a href="{% url 'vehicle-detail' vehicle.pk %}">{{ vehicle.display_name }}</a></h3>
-          <p class="muted">{{ vehicle.vin_code }}</p>
-          <div class="meta">
-            <span class="badge">{{ vehicle.plate_number }}</span>
-            <span class="badge good">{{ vehicle.accident_count }} accidents</span>
-            <span class="badge warn">{{ vehicle.service_record_count }} services</span>
-          </div>
-        </article>
-      {% empty %}
-        <div class="panel">
-          <p>No vehicles yet. Register some data through the API or Django admin, and this area will light up.</p>
+            <h1 class="hero-title">
+                Monitor every vehicle from a single dashboard
+            </h1>
+
+            <p class="hero-text">
+                Track inspections, accidents, maintenance records,
+                ownership history and risk scores in real time.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{% url 'vehicle-list' %}" class="primary-btn">
+                    Explore Vehicles
+                </a>
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'vehicle-create' %}" class="secondary-btn">
+                    Add Vehicle
+                </a>
+                {% endif %}
+            </div>
         </div>
-      {% endfor %}
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <h2>Explore the records</h2>
-        <p>Jump into each part of the vehicle history stack.</p>
-      </div>
     </div>
 
-    <div class="cards">
-      <article class="card">
-        <h3><a href="{% url 'accident-list' %}">Accidents</a></h3>
-        <p class="muted">Browse incident history and verification status.</p>
-      </article>
-      <article class="card">
-        <h3><a href="{% url 'service-record-list' %}">Service Records</a></h3>
-        <p class="muted">Review maintenance, repairs, and costs.</p>
-      </article>
-      <article class="card">
-        <h3><a href="{% url 'inspection-list' %}">Inspections</a></h3>
-        <p class="muted">Track results, ratings, and next inspection dates.</p>
-      </article>
-      <article class="card">
-        <h3><a href="{% url 'report-list' %}">Reports</a></h3>
-        <p class="muted">Open generated reports for each vehicle.</p>
-      </article>
-      <article class="card">
-        <h3><a href="{% url 'risk-score-list' %}">Risk Scores</a></h3>
-        <p class="muted">Inspect scoring and the latest calculations.</p>
-      </article>
+</section>
+
+<section class="dashboard-section">
+
+    <h2 class="section-title">
+        Platform Statistics
+    </h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h2>{{ stats.vehicles }}</h2>
+            <p>Total Vehicles</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ stats.accidents }}</h2>
+            <p>Accidents</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ stats.service_records }}</h2>
+            <p>Service Records</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ stats.inspections }}</h2>
+            <p>Inspections</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ stats.reports }}</h2>
+            <p>Reports</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ stats.risk_scores }}</h2>
+            <p>Risk Scores</p>
+        </div>
+
     </div>
-  </section>
+
+</section>
+
+<section class="dashboard-section">
+
+    <div class="section-header">
+
+        <h2 class="section-title">
+            Recently Added Vehicles
+        </h2>
+
+        <a href="{% url 'vehicle-list' %}" class="view-all-btn">
+            View All
+        </a>
+
+    </div>
+
+    <div class="vehicle-grid">
+
+        {% for vehicle in recent_vehicles %}
+
+        <div class="vehicle-card">
+
+            <div class="vehicle-card-top">
+
+                <h3>
+                    {{ vehicle.display_name }}
+                </h3>
+
+                <span class="vehicle-status">
+                    {{ vehicle.plate_number }}
+                </span>
+
+            </div>
+
+            <div class="vehicle-info">
+
+                <div>
+                    <span>VIN</span>
+                    <strong>{{ vehicle.vin_code }}</strong>
+                </div>
+
+                <div>
+                    <span>Accidents</span>
+                    <strong>{{ vehicle.accident_count }}</strong>
+                </div>
+
+                <div>
+                    <span>Services</span>
+                    <strong>{{ vehicle.service_record_count }}</strong>
+                </div>
+
+            </div>
+
+            <a href="{% url 'vehicle-detail' vehicle.pk %}"
+               class="details-btn">
+                View Details
+            </a>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty-state">
+            No vehicles found.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="dashboard-section">
+
+    <h2 class="section-title">
+        Quick Access
+    </h2>
+
+    <div class="quick-grid">
+
+        <a href="{% url 'accident-list' %}" class="quick-card">
+            <h3>Accidents</h3>
+            <p>Review incident history</p>
+        </a>
+
+        <a href="{% url 'service-record-list' %}" class="quick-card">
+            <h3>Services</h3>
+            <p>Vehicle maintenance records</p>
+        </a>
+
+        <a href="{% url 'inspection-list' %}" class="quick-card">
+            <h3>Inspections</h3>
+            <p>Technical inspections</p>
+        </a>
+
+        <a href="{% url 'report-list' %}" class="quick-card">
+            <h3>Reports</h3>
+            <p>Generated reports</p>
+        </a>
+
+        <a href="{% url 'risk-score-list' %}" class="quick-card">
+            <h3>Risk Scores</h3>
+            <p>Risk engine results</p>
+        </a>
+
+    </div>
+
+</section>
+
 {% endblock %}

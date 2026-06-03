@@ -28,7 +28,7 @@ class Inspection(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = "inspections"
+        db_table = "inspections"    
         ordering = ["-inspection_date"]
         indexes = [
             models.Index(fields=["vehicle", "-inspection_date"]),

@@ -1,23 +1,44 @@
 {% extends "base.html" %}
 
-{% block title %}AutoHistory | Delete {{ object.display_name }}{% endblock %}
+{% block title %}
+Delete Vehicle
+{% endblock %}
 
 {% block content %}
-  <section class="hero">
-    <span class="kicker">Danger zone</span>
-    <h1>Delete vehicle?</h1>
-    <p class="lead">
-      This will permanently remove <strong>{{ object.display_name }}</strong> and its linked history from the database.
-    </p>
-  </section>
 
-  <section class="section panel">
-    <form method="post">
-      {% csrf_token %}
-      <div class="actions">
-        <button class="button" type="submit">Yes, delete it</button>
-        <a class="button" href="{% url 'vehicle-detail' object.pk %}">Cancel</a>
-      </div>
-    </form>
-  </section>
+<section class="delete-wrapper">
+
+    <div class="delete-card">
+
+        <h1>
+            Delete Vehicle
+        </h1>
+
+        <p>
+            Are you sure you want to delete
+            <strong>{{ object.display_name }}</strong> ?
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="delete-actions">
+
+                <button type="submit">
+                    Delete
+                </button>
+
+                <a href="{% url 'vehicle-detail' object.pk %}">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
 {% endblock %}
