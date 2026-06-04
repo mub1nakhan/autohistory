@@ -1,113 +1,102 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <title>{% block title %}AutoHistory{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="/static/css/base.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
+    
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
 <div class="layout">
 
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-
         <div class="logo">
-            <i class="fa-solid fa-car"></i>
+            <i class="fa-solid fa-car-side"></i>
             <span>AutoHistory</span>
         </div>
 
         <nav class="menu">
-
-            <a href="{% url 'home' %}">
+            <a href="{% url 'home' %}" class="menu-item">
                 <i class="fa-solid fa-house"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
-
-            <a href="{% url 'vehicle-list' %}">
+            <a href="{% url 'vehicle-list' %}" class="menu-item">
                 <i class="fa-solid fa-car-side"></i>
-                Vehicles
+                <span>Vehicles</span>
             </a>
-
-            <a href="{% url 'accident-list' %}">
+            <a href="{% url 'accident-list' %}" class="menu-item">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                Accidents
+                <span>Accidents</span>
             </a>
-
-            <a href="{% url 'service-record-list' %}">
+            <a href="{% url 'service-record-list' %}" class="menu-item">
                 <i class="fa-solid fa-screwdriver-wrench"></i>
-                Services
+                <span>Services</span>
             </a>
-
-            <a href="{% url 'inspection-list' %}">
+            <a href="{% url 'inspection-list' %}" class="menu-item">
                 <i class="fa-solid fa-clipboard-check"></i>
-                Inspections
+                <span>Inspections</span>
             </a>
-
-            <a href="{% url 'report-list' %}">
+            <a href="{% url 'report-list' %}" class="menu-item">
                 <i class="fa-solid fa-file-lines"></i>
-                Reports
+                <span>Reports</span>
             </a>
-
-            <a href="{% url 'risk-score-list' %}">
+            <a href="{% url 'risk-score-list' %}" class="menu-item">
                 <i class="fa-solid fa-shield-halved"></i>
-                Risk Scores
+                <span>Risk Scores</span>
             </a>
-
         </nav>
-
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="main-content">
 
+        <!-- TOPBAR -->
         <header class="topbar">
-
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search...">
+                <input type="text" placeholder="Search vehicles, VIN, owner..." id="global-search">
             </div>
 
             <div class="top-actions">
-
                 {% if user.is_authenticated %}
-
-                    <a href="{% url 'web-profile' %}" class="profile-btn">
-                        {{ user.full_name|default:user.email }}
-                    </a>
-
+                    <div class="user-profile">
+                        <div class="avatar">
+                            {{ user.full_name|default:user.email|slice:":1"|upper }}
+                        </div>
+                        <div class="user-info">
+                            <span class="name">{{ user.full_name|default:user.email }}</span>
+                        </div>
+                    </div>
+                    
                     <form method="post" action="{% url 'web-logout' %}">
                         {% csrf_token %}
-                        <button class="logout-btn">
-                            Logout
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i>
                         </button>
                     </form>
-
                 {% else %}
-
-                    <a href="{% url 'web-login' %}" class="login-btn">
-                        Login
-                    </a>
-
-                    <a href="{% url 'web-register' %}" class="register-btn">
-                        Register
-                    </a>
-
+                    <a href="{% url 'web-login' %}" class="login-btn">Login</a>
+                    <a href="{% url 'web-register' %}" class="register-btn">Register</a>
                 {% endif %}
-
             </div>
-
         </header>
 
+        <!-- Messages -->
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="alert">
+                    <div class="alert alert-{{ message.tags }}">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -118,119 +107,10 @@
         {% endblock %}
 
     </main>
-
 </div>
 
-<script src="{% static 'js/vehicles.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
 
 </body>
 </html>
-
-
-.page-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:40px;
-gap:20px;
-}
-
-.search-panel{
-background:#fff;
-border-radius:24px;
-padding:25px;
-margin-bottom:30px;
-border:1px solid #ececec;
-}
-
-.search-row{
-display:flex;
-gap:15px;
-}
-
-.search-row input{
-flex:1;
-height:58px;
-border-radius:14px;
-border:1px solid #ddd;
-padding:0 20px;
-font-size:15px;
-}
-
-.vehicle-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-gap:24px;
-}
-
-.vehicle-card{
-display:block;
-background:#fff;
-border-radius:24px;
-padding:25px;
-border:1px solid #eee;
-transition:.25s;
-}
-
-.vehicle-card:hover{
-transform:translateY(-5px);
-box-shadow:0 20px 40px rgba(0,0,0,.08);
-}
-
-.vehicle-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
-
-.vehicle-top h3{
-margin:0;
-font-size:20px;
-}
-
-.vehicle-year{
-color:#888;
-font-size:14px;
-}
-
-.vehicle-meta{
-display:flex;
-justify-content:space-between;
-margin-bottom:15px;
-}
-
-.vehicle-meta small{
-display:block;
-color:#999;
-margin-bottom:5px;
-}
-
-.price-area{
-margin-top:20px;
-font-size:26px;
-font-weight:700;
-}
-
-.verified-badge{
-background:#dcfce7;
-color:#166534;
-padding:8px 12px;
-border-radius:999px;
-font-size:13px;
-font-weight:600;
-}
-
-.pagination{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:20px;
-margin-top:40px;
-}
-
-.pagination a{
-padding:10px 20px;
-background:#fff;
-border-radius:12px;
-}#

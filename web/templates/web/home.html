@@ -4,188 +4,145 @@
 
 {% block content %}
 
-<section>
-
-    <div class="hero-banner">
-
-        <div>
-            <span class="hero-badge">
-                Vehicle Intelligence Platform
-            </span>
-
-            <h1 class="hero-title">
-                Monitor every vehicle from a single dashboard
-            </h1>
-
-            <p class="hero-text">
-                Track inspections, accidents, maintenance records,
-                ownership history and risk scores in real time.
-            </p>
-
-            <div class="hero-actions">
-                <a href="{% url 'vehicle-list' %}" class="primary-btn">
-                    Explore Vehicles
-                </a>
-
-                {% if user.is_authenticated %}
-                <a href="{% url 'vehicle-create' %}" class="secondary-btn">
-                    Add Vehicle
-                </a>
-                {% endif %}
-            </div>
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-glass">
+        <span class="hero-badge">Vehicle Intelligence Platform</span>
+        
+        <h1 class="hero-title">
+            Monitor every vehicle from a single dashboard
+        </h1>
+        
+        <p class="hero-text">
+            Track inspections, accidents, maintenance records, 
+            ownership history and risk scores in real time.
+        </p>
+        
+        <div class="hero-actions">
+            <a href="{% url 'vehicle-list' %}" class="primary-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Explore Vehicles
+            </a>
+            
+            {% if user.is_authenticated %}
+            <a href="{% url 'vehicle-create' %}" class="secondary-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Vehicle
+            </a>
+            {% endif %}
         </div>
-
     </div>
-
 </section>
 
+<!-- STATISTICS -->
 <section class="dashboard-section">
-
-    <h2 class="section-title">
-        Platform Statistics
-    </h2>
-
+    <div class="section-header">
+        <h2 class="section-title">Platform Statistics</h2>
+    </div>
+    
     <div class="stats-grid">
-
-        <div class="stat-card">
-            <h2>{{ stats.vehicles }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.vehicles|default:0 }}</h2>
             <p>Total Vehicles</p>
         </div>
-
-        <div class="stat-card">
-            <h2>{{ stats.accidents }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.accidents|default:0 }}</h2>
             <p>Accidents</p>
         </div>
-
-        <div class="stat-card">
-            <h2>{{ stats.service_records }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.service_records|default:0 }}</h2>
             <p>Service Records</p>
         </div>
-
-        <div class="stat-card">
-            <h2>{{ stats.inspections }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.inspections|default:0 }}</h2>
             <p>Inspections</p>
         </div>
-
-        <div class="stat-card">
-            <h2>{{ stats.reports }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.reports|default:0 }}</h2>
             <p>Reports</p>
         </div>
-
-        <div class="stat-card">
-            <h2>{{ stats.risk_scores }}</h2>
+        <div class="glass-card stat-card">
+            <h2>{{ stats.risk_scores|default:0 }}</h2>
             <p>Risk Scores</p>
         </div>
-
     </div>
-
 </section>
 
+<!-- RECENT VEHICLES -->
 <section class="dashboard-section">
-
     <div class="section-header">
-
-        <h2 class="section-title">
-            Recently Added Vehicles
-        </h2>
-
-        <a href="{% url 'vehicle-list' %}" class="view-all-btn">
-            View All
-        </a>
-
+        <h2 class="section-title">Recently Added Vehicles</h2>
+        <a href="{% url 'vehicle-list' %}" class="view-all-btn">View All →</a>
     </div>
-
+    
     <div class="vehicle-grid">
-
         {% for vehicle in recent_vehicles %}
-
-        <div class="vehicle-card">
-
+        <div class="glass-card vehicle-card">
             <div class="vehicle-card-top">
-
-                <h3>
-                    {{ vehicle.display_name }}
-                </h3>
-
-                <span class="vehicle-status">
-                    {{ vehicle.plate_number }}
-                </span>
-
+                <h3>{{ vehicle.display_name }}</h3>
+                <span class="vehicle-plate">{{ vehicle.plate_number }}</span>
             </div>
-
+            
             <div class="vehicle-info">
-
                 <div>
                     <span>VIN</span>
                     <strong>{{ vehicle.vin_code }}</strong>
                 </div>
-
                 <div>
                     <span>Accidents</span>
-                    <strong>{{ vehicle.accident_count }}</strong>
+                    <strong class="text-red-400">{{ vehicle.accident_count }}</strong>
                 </div>
-
                 <div>
                     <span>Services</span>
-                    <strong>{{ vehicle.service_record_count }}</strong>
+                    <strong class="text-cyan-400">{{ vehicle.service_record_count }}</strong>
                 </div>
-
             </div>
-
-            <a href="{% url 'vehicle-detail' vehicle.pk %}"
-               class="details-btn">
-                View Details
+            
+            <a href="{% url 'vehicle-detail' vehicle.pk %}" class="details-btn">
+                View Full History →
             </a>
-
         </div>
-
         {% empty %}
-
-        <div class="empty-state">
-            No vehicles found.
+        <div class="glass-card empty-state">
+            <p>No vehicles found yet.</p>
         </div>
-
         {% endfor %}
-
     </div>
-
 </section>
 
+<!-- QUICK ACCESS -->
 <section class="dashboard-section">
-
-    <h2 class="section-title">
-        Quick Access
-    </h2>
-
+    <div class="section-header">
+        <h2 class="section-title">Quick Access</h2>
+    </div>
+    
     <div class="quick-grid">
-
-        <a href="{% url 'accident-list' %}" class="quick-card">
+        <a href="{% url 'accident-list' %}" class="glass-card quick-card">
+            <i class="fa-solid fa-triangle-exclamation"></i>
             <h3>Accidents</h3>
             <p>Review incident history</p>
         </a>
-
-        <a href="{% url 'service-record-list' %}" class="quick-card">
+        <a href="{% url 'service-record-list' %}" class="glass-card quick-card">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
             <h3>Services</h3>
-            <p>Vehicle maintenance records</p>
+            <p>Maintenance records</p>
         </a>
-
-        <a href="{% url 'inspection-list' %}" class="quick-card">
+        <a href="{% url 'inspection-list' %}" class="glass-card quick-card">
+            <i class="fa-solid fa-clipboard-check"></i>
             <h3>Inspections</h3>
-            <p>Technical inspections</p>
+            <p>Technical checks</p>
         </a>
-
-        <a href="{% url 'report-list' %}" class="quick-card">
+        <a href="{% url 'report-list' %}" class="glass-card quick-card">
+            <i class="fa-solid fa-file-lines"></i>
             <h3>Reports</h3>
             <p>Generated reports</p>
         </a>
-
-        <a href="{% url 'risk-score-list' %}" class="quick-card">
+        <a href="{% url 'risk-score-list' %}" class="glass-card quick-card">
+            <i class="fa-solid fa-shield-halved"></i>
             <h3>Risk Scores</h3>
-            <p>Risk engine results</p>
+            <p>AI Risk Analysis</p>
         </a>
-
     </div>
-
 </section>
 
 {% endblock %}
